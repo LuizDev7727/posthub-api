@@ -3,7 +3,7 @@ import { checkRequestSession } from "../../middleware/check-request-session"
 import { z } from 'zod'
 import { getPosts } from "@/infra/functions/posts/get-posts"
 
-export const getOrganizationsRoute: FastifyPluginAsyncZod = async (server) => {
+export const getPostsRoute: FastifyPluginAsyncZod = async (server) => {
   server.post('/organizations/:id/posts', {
     preHandler: [
       checkRequestSession,

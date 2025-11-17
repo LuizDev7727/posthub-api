@@ -1,4 +1,5 @@
 import { accountsTable } from "./accounts.table";
+import { bestMomentsTable } from "./best-moments.table";
 import { integrationsTable } from "./integrations.table";
 import { invitationsTable } from "./invitations.table";
 import { membersTable } from "./members.table";
@@ -21,5 +22,6 @@ export const tables = {
   integrationsTable,
   postsTable,
   projectsTable,
-  socialsToPostTable
+  socialsToPostTable,
+  bestMomentsTable
 }

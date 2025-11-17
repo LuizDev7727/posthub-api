@@ -4,6 +4,7 @@ import { uuidv7 } from "uuidv7";
 import { usersTable } from './users.table';
 import { organizationsTable } from './organizations.table';
 import { socialsToPostTable } from './socials-to-post.table';
+import { bestMomentsTable } from './best-moments.table';
 
 export const statusEnum = pgEnum('post_status', [
   'SUCCESS',
@@ -32,6 +33,7 @@ export const postsTable = pgTable("posts", {
 
 export const postsRelations = relations(postsTable, ({ one, many }) => ({
   socialsToPost: many(socialsToPostTable),
+  bestMoments: many(bestMomentsTable),
 
   organization: one(organizationsTable, {
     fields: [postsTable.organizationId],
