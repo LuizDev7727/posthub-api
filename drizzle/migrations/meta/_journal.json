@@ -15,6 +15,13 @@
       "when": 1763381239865,
       "tag": "0001_late_impossible_man",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1763382009976,
+      "tag": "0002_bent_korath",
+      "breakpoints": true
     }
   ]
 }
