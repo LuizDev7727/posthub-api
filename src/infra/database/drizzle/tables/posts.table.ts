@@ -19,6 +19,7 @@ export const postsTable = pgTable("posts", {
   description: varchar("description").notNull(),
   createdAt: timestamp("created_at").notNull(),
   size: integer().notNull(),
+  duration: integer().notNull(),
   status: statusEnum().notNull().default('PROCESSING'),
   scheduledTo: timestamp('scheduled_to', { withTimezone: true }).notNull().defaultNow(),
   ownerId: text("owner_id").notNull().references(() => usersTable.id, {
