@@ -6,6 +6,9 @@ import { organization } from "better-auth/plugins";
 import { uuidv7 } from "uuidv7";
 
 export const auth = betterAuth({
+  trustedOrigins: [
+    'http://localhost:5173'
+  ],
   database: drizzleAdapter(db, {
     provider: 'pg',
     usePlural: true,

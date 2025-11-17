@@ -4,14 +4,21 @@ import cors from '@fastify/cors'
 import { env } from "./env";
 import fastifySwagger from "@fastify/swagger";
 import scalar from '@scalar/fastify-api-reference'
+import { authRoute } from "./infra/http/routes/auth/auth.route";
 
 const server = fastify().withTypeProvider<ZodTypeProvider>()
 
-server.register(cors,{
-  origin: ['http://localhost:5173'],
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+server.register(cors, {
+  origin: process.env.CLIENT_ORIGIN || "http://localhost:8080",
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: [
+    "Content-Type",
+    "Authorization",
+    "X-Requested-With"
+  ],
   credentials: true,
-})
+  maxAge: 86400
+});
 
 if(env.NODE_ENV === 'development') {
   
@@ -33,6 +40,9 @@ if(env.NODE_ENV === 'development') {
 
 server.setValidatorCompiler(validatorCompiler)
 server.setSerializerCompiler(serializerCompiler)
+
+// Register authentication endpoint
+server.register(authRoute)
 
 server.listen({ port: env.PORT }).then(() => {
   console.log(`💻 HTTP server running on http://localhost:${env.PORT}`)
