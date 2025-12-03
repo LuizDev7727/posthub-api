@@ -43,6 +43,13 @@
       "when": 1763393463879,
       "tag": "0005_romantic_vargas",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1763401842399,
+      "tag": "0006_outgoing_madrox",
+      "breakpoints": true
     }
   ]
 }

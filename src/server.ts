@@ -6,6 +6,8 @@ import fastifySwagger from "@fastify/swagger";
 import scalar from '@scalar/fastify-api-reference'
 import { authRoute } from "./infra/http/routes/auth/auth.route";
 import { getOrganizationsRoute } from "./infra/http/routes/organizations/get-organizations.route";
+import { getPostsRoute } from "./infra/http/routes/posts/get-posts.route";
+import { getProjectsRoute } from "./infra/http/routes/projects/get-projecs.route";
 
 const server = fastify().withTypeProvider<ZodTypeProvider>()
 
@@ -45,6 +47,8 @@ server.setSerializerCompiler(serializerCompiler)
 // Register authentication endpoint
 server.register(authRoute)
 server.register(getOrganizationsRoute)
+server.register(getPostsRoute)
+server.register(getProjectsRoute)
 
 server.listen({ port: env.PORT }).then(() => {
   console.log(`💻 HTTP server running on http://localhost:${env.PORT}`)

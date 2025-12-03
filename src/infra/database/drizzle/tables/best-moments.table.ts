@@ -1,17 +1,21 @@
 import { pgTable, text, timestamp } from "drizzle-orm/pg-core";
-import { usersTable } from "./users.table";
 import { relations } from "drizzle-orm";
 import { projectsTable } from "./projects.table";
 import { postsTable } from "./posts.table";
+import { uuidv7 } from "uuidv7";
 
 export const bestMomentsTable = pgTable("best_moments", {
-  id: text("id").primaryKey(),
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => uuidv7()),
   title: text("title").notNull(),
-  videoUrl: text("video_url").notNull(),
-  projectId: text("project_id")
-    .references(() => projectsTable.id, { onDelete: "cascade" }),
-  postId: text("post_id")
-    .references(() => postsTable.id, { onDelete: "cascade" }),
+  storageKey: text("storage_key").notNull(), //change to storageKey
+  projectId: text("project_id").references(() => projectsTable.id, {
+    onDelete: "cascade",
+  }),
+  postId: text("post_id").references(() => postsTable.id, {
+    onDelete: "cascade",
+  }),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 

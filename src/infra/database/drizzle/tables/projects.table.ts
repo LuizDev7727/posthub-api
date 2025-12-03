@@ -14,12 +14,14 @@ export const projectStatusEnum = pgEnum("project_status", [
 ]);
 
 export const projectsTable = pgTable("projects", {
-  id: text("id").primaryKey().$defaultFn(() => uuidv7()),
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => uuidv7()),
   title: varchar().notNull(),
-  thumbnailUrl: varchar('thumbnail_url').notNull(),
-  createdAt: timestamp("created_at").notNull(),
+  thumbnailUrl: varchar("thumbnail_url"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
   status: projectStatusEnum().notNull().default("PROCESSING"),
-  organizationId: text("organization_id")
+  organizationSlug: text("organization_slug")
     .notNull()
     .references(() => organizationsTable.id, {
       onDelete: "cascade",
@@ -34,7 +36,7 @@ export const projectsTable = pgTable("projects", {
 export const projectsRelations = relations(projectsTable, ({ one, many }) => ({
   bestMoments: many(bestMomentsTable),
   organization: one(organizationsTable, {
-    fields: [projectsTable.organizationId],
+    fields: [projectsTable.organizationSlug],
     references: [organizationsTable.id],
   }),
   owner: one(usersTable, {

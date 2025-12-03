@@ -1,9 +1,12 @@
 import { pgTable, text, timestamp } from "drizzle-orm/pg-core";
 import { organizationsTable } from "./organizations.table";
 import { usersTable } from "./users.table";
+import { uuidv7 } from "uuidv7";
 
 export const invitationsTable = pgTable("invitations", {
-  id: text("id").primaryKey(),
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => uuidv7()),
   organizationId: text("organization_id")
     .notNull()
     .references(() => organizationsTable.id, { onDelete: "cascade" }),

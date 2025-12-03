@@ -1,27 +1,28 @@
-import { db } from "@/infra/database/drizzle/client"
-import { integrationsTable } from "@/infra/database/drizzle/tables/integrations.table"
-import { membersTable } from "@/infra/database/drizzle/tables/members.table"
-import { organizationsTable } from "@/infra/database/drizzle/tables/organizations.table"
-import { postsTable } from "@/infra/database/drizzle/tables/posts.table"
-import { dayjs } from "@/lib/dayjs"
-import { and, count, eq, gte, sum } from "drizzle-orm"
+import { db } from "@/infra/database/drizzle/client";
+import { integrationsTable } from "@/infra/database/drizzle/tables/integrations.table";
+import { membersTable } from "@/infra/database/drizzle/tables/members.table";
+import { organizationsTable } from "@/infra/database/drizzle/tables/organizations.table";
+import { postsTable } from "@/infra/database/drizzle/tables/posts.table";
+import { dayjs } from "@/lib/dayjs";
+import { and, count, eq, gte, sum } from "drizzle-orm";
 
 type GetMetricsParams = {
-  organizationId:string
-}
+  organizationSlug: string;
+};
 
 type GetMetricsResponse = {
-  totalPosts: number
-  totalMembers: number
-  totalIntegrations: number
+  totalPosts: number;
+  totalMembers: number;
+  totalIntegrations: number;
   usage: {
-    totalStorage: number
-    totalMonthlyBandwidth: number
-  }
-}
+    totalStorage: number;
+    totalMonthlyBandwidth: number;
+  };
+};
 
-export async function getMetrics({ organizationId }:GetMetricsParams): Promise<GetMetricsResponse> {
-  
+export async function getMetrics({
+  organizationSlug,
+}: GetMetricsParams): Promise<GetMetricsResponse> {
   const [
     [{ totalPosts }],
     [{ totalMembers }],
@@ -30,56 +31,45 @@ export async function getMetrics({ organizationId }:GetMetricsParams): Promise<G
     [{ totalMonthlyBandwidth }],
   ] = await Promise.all([
     db
-    .select({
-      totalPosts: count()
-    })
-    .from(postsTable)
-    .where(
-      eq(postsTable.organizationId, organizationId)
-    ),
+      .select({
+        totalPosts: count(),
+      })
+      .from(postsTable)
+      .where(eq(postsTable.organizationSlug, organizationSlug)),
 
     db
-    .select({
-      totalMembers: count()
-    })
-    .from(membersTable)
-    .where(
-      eq(membersTable.organizationId, organizationId)
-    ),
-    
-    db
-    .select({
-      totalIntegrations: count()
-    })
-    .from(integrationsTable)
-    .where(
-      eq(integrationsTable.organizationId, organizationId)
-    ),
+      .select({
+        totalMembers: count(),
+      })
+      .from(membersTable)
+      .where(eq(membersTable.organizationSlug, organizationSlug)),
 
     db
-    .select({
-      totalStorage: sum(postsTable.size).mapWith(Number)
-    })
-    .from(postsTable)
-    .where(
-      and (
-        eq(postsTable.organizationId, organizationId)
-      )
-    ),
-    
-    db
-    .select({
-      totalMonthlyBandwidth: sum(postsTable.size).mapWith(Number)
-    })
-    .from(postsTable)
-    .where(
-      and (
-        gte(postsTable.createdAt, dayjs().subtract(30, 'days').toDate()),
-        eq(postsTable.organizationId, organizationId)
-      )
-    )
+      .select({
+        totalIntegrations: count(),
+      })
+      .from(integrationsTable)
+      .where(eq(integrationsTable.organizationId, organizationSlug)),
 
-  ])
+    db
+      .select({
+        totalStorage: sum(postsTable.size).mapWith(Number),
+      })
+      .from(postsTable)
+      .where(and(eq(postsTable.organizationSlug, organizationSlug))),
+
+    db
+      .select({
+        totalMonthlyBandwidth: sum(postsTable.size).mapWith(Number),
+      })
+      .from(postsTable)
+      .where(
+        and(
+          gte(postsTable.createdAt, dayjs().subtract(30, "days").toDate()),
+          eq(postsTable.organizationSlug, organizationSlug),
+        ),
+      ),
+  ]);
 
   return {
     totalPosts,
@@ -87,7 +77,7 @@ export async function getMetrics({ organizationId }:GetMetricsParams): Promise<G
     totalMembers,
     usage: {
       totalMonthlyBandwidth,
-      totalStorage
-    }
-  }
+      totalStorage,
+    },
+  };
 }
